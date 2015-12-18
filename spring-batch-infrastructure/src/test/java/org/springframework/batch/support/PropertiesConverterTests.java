@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.batch.support;
 
 import static org.junit.Assert.assertEquals;
@@ -24,124 +23,169 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.springframework.util.StringUtils;
+//import org.springframework.batch.support.PropertiesConverter;
 
 /**
  * Unit tests for {@link PropertiesConverter}
  * 
  * @author Robert Kasanicky
+ * @author Alexis Soumagne
  */
 public class PropertiesConverterTests {
-	
-	//convenience attributes for storing results of conversions
-	private Properties props = null;
-	private String string = null;
-	
-	/**
-	 * Check that Properties can be converted to String and back correctly.
-	 */
-	@Test
-	public void testTwoWayRegularConversion() {
-		
-		Properties storedProps = new Properties();
-		storedProps.setProperty("key1", "value1");
-		storedProps.setProperty("key2", "value2");
-		
-		props = PropertiesConverter.stringToProperties(PropertiesConverter.propertiesToString(storedProps));
-		
-		assertEquals(storedProps, props);
-	}
-	
-	/**
-	 * Check that Properties can be comma delimited.
-	 */
-	@Test
-	public void testRegularConversionWithComma() {
-		
-		Properties storedProps = new Properties();
-		storedProps.setProperty("key1", "value1");
-		storedProps.setProperty("key2", "value2");
-		
-		props = PropertiesConverter.stringToProperties("key1=value1,key2=value2");
-		
-		assertEquals(storedProps, props);
-	}
 
-	/**
-	 * Check that Properties can be comma delimited with extra whitespace.
-	 */
-	@Test
-	public void testRegularConversionWithCommaAndWhitespace() {
-		
-		Properties storedProps = new Properties();
-		storedProps.setProperty("key1", "value1");
-		storedProps.setProperty("key2", "value2");
-		
-		props = PropertiesConverter.stringToProperties("key1=value1, key2=value2");
-		
-		assertEquals(storedProps, props);
-	}
 
-	/**
-	 * Check that Properties can be comma delimited with extra whitespace.
-	 */
-	@Test
-	public void testShortConversionWithCommas() {
-		
-		Properties storedProps = new Properties();
-		storedProps.setProperty("key1", "value1");
-		storedProps.setProperty("key2", "value2");
-		
-		String value = PropertiesConverter.propertiesToString(storedProps);
-		
-		assertTrue("Wrong value: "+value, value.contains("key1=value1"));
-		assertTrue("Wrong value: "+value, value.contains("key2=value2"));
-		assertEquals(1, StringUtils.countOccurrencesOf(value, ","));
-	}
+  //convenience attributes for storing results of conversions
+    private Properties props = null;
+    private String string = null;
+    
+    /**
+     * Check that Properties can be converted to String and back correctly.
+     */
+    @Test
+    public void testTwoWayRegularConversion() {
+        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("key1", "c:/foo/bar.txt");
+        storedProps.setProperty("key2", "c:/bar/foo.txt");
+        
+        props = PropertiesConverter.stringToProperties(PropertiesConverter.propertiesToString(storedProps));
+        
+        assertEquals(storedProps, props);
+    }
+    
+    /**
+     * Check that String can be converted to Properties and back correctly.
+     */
+    @Test
+    public void testTwoWayRegularConversionRevert() {        
+        String storedProps = "key2=c:/bar/foo.txt,key1=c:/foo/bar.txt";        
+        String props = PropertiesConverter.propertiesToString(PropertiesConverter.stringToProperties(storedProps));
+        
+        assertEquals(storedProps, props);
+    }
+    
+    /**
+     * Check that Properties can be comma delimited.
+     */
+    @Test
+    public void testRegularConversionWithComma() {
+        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("key1", "value1");
+        storedProps.setProperty("key2", "value2");
+        
+        props = PropertiesConverter.stringToProperties("key1=value1,key2=value2");
+        
+        assertEquals(storedProps, props);
+    }
 
-	/**
-	 * Check that Properties can be newline delimited.
-	 */
-	@Test
-	public void testRegularConversionWithCommaAndNewline() {
-		
-		Properties storedProps = new Properties();
-		storedProps.setProperty("key1", "value1");
-		storedProps.setProperty("key2", "value2");
-		
-		props = PropertiesConverter.stringToProperties("key1=value1\n key2=value2");
-		
-		assertEquals(storedProps, props);
-	}
+    /**
+     * Check that Properties can be comma delimited with extra whitespace.
+     */
+    @Test
+    public void testRegularConversionWithCommaAndWhitespace() {
+        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("key1", "value1");
+        storedProps.setProperty("key2", "value2");
+        
+        props = PropertiesConverter.stringToProperties("key1=value1, key2=value2");
+        
+        assertEquals(storedProps, props);
+    }
 
-	/**
-	 * Null String should be converted to empty Properties
-	 */
-	@Test
-	public void testStringToPropertiesNull() {
-		props = PropertiesConverter.stringToProperties(null);
-		assertNotNull(props);
-		assertEquals("properties are empty", 0, props.size());
-	}
-	
-	/**
-	 * Null or empty properties should be converted to empty String
-	 */
-	@Test
-	public void testPropertiesToStringNull() {
-		string = PropertiesConverter.propertiesToString(null);
-		assertEquals("", string);
-		
-		string = PropertiesConverter.propertiesToString(new Properties());
-		assertEquals("", string);
-	}
-	
-	@Test
-	public void testEscapedColon() throws Exception {
-		Properties props = new Properties();
-		props.setProperty("test", "C:/test");
-		String str = PropertiesConverter.propertiesToString(props);
-		props = PropertiesConverter.stringToProperties(str);
-		assertEquals("C:/test", props.getProperty("test"));
-	}
-	
+    /**
+     * Check that Properties can be comma delimited with extra whitespace.
+     */
+    @Test
+    public void testShortConversionWithCommas() {
+        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("key1", "value1");
+        storedProps.setProperty("key2", "value2");
+        
+        String value = PropertiesConverter.propertiesToString(storedProps);
+        
+        assertTrue("Wrong value: "+value, value.contains("key1=value1"));
+        assertTrue("Wrong value: "+value, value.contains("key2=value2"));
+        assertEquals(1, StringUtils.countOccurrencesOf(value, ","));
+    }
+    
+    /**
+     * Check that Properties can deal with extra whitespace.
+     */
+    @Test
+    public void testWhiteSpaceToString() {        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("updatedStartTime", "20131014 204000000");
+        
+        String value = PropertiesConverter.propertiesToString(storedProps);
+        
+        assertEquals("updatedStartTime=20131014 204000000", value);
+    }
+    
+    /**
+     * Check that Properties can deal with extra whitespace.
+     */
+    @Test
+    public void testWhiteSpaceToProperties() {        
+        Properties storedProps = PropertiesConverter.stringToProperties("updatedStartTime=20131014 204000000");
+        
+        assertEquals("20131014 204000000", storedProps.getProperty("updatedStartTime"));
+    }
+
+    /**
+     * Check that Properties can be newline delimited.
+     */
+    @Test
+    public void testRegularConversionWithCommaAndNewline() {
+        
+        Properties storedProps = new Properties();
+        storedProps.setProperty("key1", "value1");
+        storedProps.setProperty("key2", "value2");
+        
+        props = PropertiesConverter.stringToProperties("key1=value1\n key2=value2");
+        
+        assertEquals(storedProps, props);
+    }
+
+    /**
+     * Null String should be converted to empty Properties
+     */
+    @Test
+    public void testStringToPropertiesNull() {
+        props = PropertiesConverter.stringToProperties(null);
+        assertNotNull(props);
+        assertEquals("properties are empty", 0, props.size());
+    }
+    
+    /**
+     * Null or empty properties should be converted to empty String
+     */
+    @Test
+    public void testPropertiesToStringNull() {
+        string = PropertiesConverter.propertiesToString(null);
+        assertEquals("", string);
+        
+        string = PropertiesConverter.propertiesToString(new Properties());
+        assertEquals("", string);
+    }
+    
+    @Test
+    public void testEscapedColon() throws Exception {
+        Properties props = new Properties();
+        props.setProperty("test", "C:/test");
+        String str = PropertiesConverter.propertiesToString(props);
+        props = PropertiesConverter.stringToProperties(str);
+        assertEquals("C:/test", props.getProperty("test"));
+    }
+    
+    @Test
+    public void testDoubleBackSlash() throws Exception {
+        Properties props = new Properties();
+        props.setProperty("test", "C:\\test\\test.txt");
+        String str = PropertiesConverter.propertiesToString(props);
+        props = PropertiesConverter.stringToProperties(str);
+        assertEquals("C:\\test\\test.txt", props.getProperty("test"));
+    }
 }
